@@ -1,1 +1,5 @@
-const a = [1, 2, 3, undefined];
+class A {
+  public static headcount: number = 0;
+}
+const a = new A();
+A.headcount;

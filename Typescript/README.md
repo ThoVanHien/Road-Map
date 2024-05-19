@@ -9,11 +9,15 @@
   - object thì cho gán lại object, array, và không phải là primitive type
     {[key: string]: string} không cho gán lại bất kì gì ngoài tuân theo quy tắc. Vd: {prop: 'kieu du lieu string'}
 - Array:
-  - const a = [1,2,3, null] // number[]
-  - const a = [1,2,3, undefined] // (number| undefined)[]
+  ```typescript
+  const a = [1, 2, 3, null]; // number[]
+  const a = [1, 2, 3, undefined]; // (number| undefined)[]
+  ```
 - Tupple:
 
-  - const a: [number, ?string] // theo đúng thứ tự, nếu ? là optional
+  ```typescript
+  const a: [number, ?string]; // theo đúng thứ tự, nếu ? là optional
+  ```
 
 - Enum:
   ```typescript
@@ -29,8 +33,27 @@
   ```
 - Union:
 
-  - let a: string | number
+  ```typescript
+  let a: string | number;
+  ```
 
 - Type aliases:
-  - type abc = string | number
-  - const a:abc = 1 // hoặc 'string'
+
+  ```typescript
+  type abc = string | number;
+  const a: abc = 1; // hoặc 'string'
+  ```
+
+- Class trong typescript:
+  - Access Modifiers:
+    - Private: chỉ sử dụng được trong class.
+    - Public: truy cập bởi class, instance.
+    - Protected: chỉ base class và subclass
+  - Readonly: `readonly` property, không thể gán lại bằng constructor hoặc gán bình thường.
+  - Getters/Setters: `get` và `set` property | method. Dùng để xào nấu một private property nào đó. Thường property đặt tên biến `_tenBien`. `get tenBien() {...}`
+  - Kế thừa dùng `extends`. `super` dùng để gọi constructor của base class.
+  - Method overriding: `super.meThod()` ở subclass
+  - `Instance property` là property sau khi được `new classA()`.
+  - `Static property` là property được share chung giữa các instances của 1 class. Chỉ dùng như sau `classA.staticProperty` Không dùng `this`
+- ## Abstract classes:
+  -
