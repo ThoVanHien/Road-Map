@@ -45,6 +45,7 @@
   ```
 
 - Class trong typescript:
+
   - Access Modifiers:
     - Private: chỉ sử dụng được trong class.
     - Public: truy cập bởi class, instance.
@@ -55,5 +56,52 @@
   - Method overriding: `super.meThod()` ở subclass
   - `Instance property` là property sau khi được `new classA()`.
   - `Static property` là property được share chung giữa các instances của 1 class. Chỉ dùng như sau `classA.staticProperty` Không dùng `this`
+
 - ## Abstract classes:
-  -
+
+  - Có thể chứa normal method.
+  - Nếu có method là abstract method thì class bắt buộc phải là abstract class.
+  - Abstract class phải được `extends` chứ không khởi tạo instance trực tiếp.
+
+  ```typescript
+  abstract class Employee {
+    abstract fn(): string;
+    name: string;
+    constructor() {
+      this.name = this.fn();
+    }
+  }
+
+  class ContractEmployee extends Employee {
+    constructor() {
+      super();
+    }
+    fn() {
+      return "Contract Van Hien";
+    }
+  }
+
+  const emp = new ContractEmployee();
+  console.log(emp);
+  ```
+
+## Singleton Pattern
+
+- Thêm private vào trước constructor.
+
+  ```typescript
+  class Person {
+    private static _instance: Person;
+    private constructor() {}
+    static getInstance() {
+      if (this._instance) {
+        return this._instance;
+      }
+      this._instance = new Person();
+      return Person._instance;
+    }
+  }
+  const p1 = Person.getInstance();
+  const p2 = Person.getInstance();
+  console.log(p1 === p2); //true
+  ```
