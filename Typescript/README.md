@@ -105,3 +105,51 @@
   const p2 = Person.getInstance();
   console.log(p1 === p2); //true
   ```
+
+## Interface
+
+- `interface NameI`: không chứa bất kì `implementation` nào
+- `interface` giống như `type`
+- Những trường hợp sử dụng `interface`:
+
+  - Dùng như type của object.
+  - Dùng `implements` để class có các properties và method như interface đã định nghĩa.
+  - Dùng để định nghĩa kiểu dữ liệu của parameter trong 1 function
+
+  ```typescript
+  interface User {
+    prop: string; // Không thể gán giá trị
+    greetUser(): void; // method
+  }
+
+  // TH1
+  let user: User;
+  user = {
+    prop: "prop",
+    greetUser() {
+      console.log(this.prop);
+    },
+  };
+  user.greetUser();
+
+  // TH2
+  class Admin implements User {
+    prop: string = "hien";
+    greetUser(): void {
+      console.log(this.prop);
+    }
+  }
+
+  // TH3
+  function callAMessage(user: User) {
+    user.greetUser();
+  }
+  const ad = new Admin();
+  callAMessage(ad);
+  ```
+
+- Readonly trong `interface`
+
+  - Nếu trong interface định nghĩa là `readonly` thì khi class `implements` interface đó thì có thể khai báo lại mà không cần phải có từ khóa `readonly`. Điều này xảy ra 1 vấn đề khi dùng class để làm kiểu dữ liệu thì hoàn toàn có thể sử dụng prop định nghĩa ở lớp cha(không còn `readonly`)
+
+- Optional: sử dụng sau tên prop. Ví dụ `location?: string|undefined = 'HCM city'`

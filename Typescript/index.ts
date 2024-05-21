@@ -1,14 +1,13 @@
-class Person {
-  private static _instance: Person;
-  private constructor() {}
-  static getInstance() {
-    if (this._instance) {
-      return this._instance;
-    }
-    this._instance = new Person();
-    return this._instance;
-  }
+interface User {
+  prop: string; // Không thể gán giá trị
+  readonly propReadOnly: string;
 }
-const p1 = Person.getInstance();
-const p2 = Person.getInstance();
-console.log(p1 === p2); //true
+
+class Admin implements User {
+  propReadOnly: any = 5;
+  prop: string;
+  // propReadOnly: any = 1;
+}
+let ad = new Admin();
+ad.propReadOnly = 1;
+console.log(ad.propReadOnly);
