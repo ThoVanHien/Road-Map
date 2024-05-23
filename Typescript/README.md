@@ -1,5 +1,6 @@
 ## Typescript Type
 
+- Link tham khảo: https://www.typescripttutorial.net/
 - Type inference: TS tự gán kiểu khi gán biến
 - Type annotations: đặt type cho biến. Sd khi chưa muốn gán giá trị ngay tại thời điểm khởi tạo, rõ ràng kiểu giá trị trả về của 1 hàm.
 - Các kiểu primitive types trong typescript: number, bigint, string, boolean, null, undefined, symbol
@@ -87,6 +88,7 @@
 
 ## Singleton Pattern
 
+- Link tham khảo: https://www.youtube.com/@procademy
 - Thêm private vào trước constructor.
 
   ```typescript
@@ -153,3 +155,36 @@
   - Nếu trong interface định nghĩa là `readonly` thì khi class `implements` interface đó thì có thể khai báo lại mà không cần phải có từ khóa `readonly`. Điều này xảy ra 1 vấn đề khi dùng class để làm kiểu dữ liệu thì hoàn toàn có thể sử dụng prop định nghĩa ở lớp cha(không còn `readonly`)
 
 - Optional: sử dụng sau tên prop. Ví dụ `location?: string|undefined = 'HCM city'`
+
+- `interface` có thể multi `extends`. Còn `class` chỉ có thể single `extends`
+
+## Intersection `&`
+
+- Video tham khảo: https://youtu.be/ZVMAPLvfcDc?si=7E8J2gPqVaTNWedn
+
+```typescript
+// TH1
+type stringOrNumber = string | number;
+type boolOrNumber = number | boolean;
+type myType = stringOrNumber & boolOrNumber; // giống với toán tử &&
+
+// TH2
+type a = {
+  name: string;
+};
+type b = {
+  name: number;
+};
+type c = a & b; // sẽ bị lỗi do nó compare từng member type với nhau
+
+// TH3
+interface O {
+  id: number;
+  items: string[];
+}
+function temp(o: O & {}) {
+  // Có thể hiểu O là type object. Nó phải so với keys trong type object
+  console.log(o.id, o.items);
+}
+temp({ id: 1, items: ["1"] });
+```

@@ -1,13 +1,16 @@
-interface User {
-  prop: string; // Không thể gán giá trị
-  readonly propReadOnly: string;
+interface O {
+  id: number;
+  items: string[];
 }
+type te = O & number;
+let test: te = {
+  id: 1,
+  items: ["1"],
+};
 
-class Admin implements User {
-  propReadOnly: any = 5;
-  prop: string;
-  // propReadOnly: any = 1;
-}
-let ad = new Admin();
-ad.propReadOnly = 1;
-console.log(ad.propReadOnly);
+// function temp(o: O & number) {
+//   // Có thể hiểu O là object. Nó phải so với 1obj thì mới không bị never
+//   console.log(o.id, o.items, o.a);
+// }
+
+// temp({ id: 1, items: ["1"], a: "1" });
