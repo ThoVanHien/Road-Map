@@ -1,9 +1,176 @@
+# Ref
+
+-[Jonas course]
+
+(1) : https://github.com/jonasschmedtmann/complete-javascript-course/blob/master/14-OOP/final/script.js
+
+(2) : https://www.udemy.com/course/the-complete-javascript-course/
+
+-[Javascript Tutorial]: https://www.javascripttutorial.net/
+
+## Argument vs. Parameter
+
+<p align="center" width=100%>
+    <img width=80% src="https://i.sstatic.net/9lg1H.png">
+</p>
+
+### 1. Argument object
+
+- Argument object trong một function là gì. Mình lấy ví dụ:
+
+```javascript
+function example() {
+  console.log(arguments[0]); // 1
+}
+example(1, 3);
+```
+
+- Nhìn có vẻ giống một array, nhưng nó KHÔNG phải là một instance của Array
+
+```javascript
+function example() {
+  return arguments.filter((x) => x > 0); //arguments.filter is not a function
+}
+example(1, 2, 3, 4);
+```
+
+- Nó là một `iterable`.
+<p align="center" width=100%>
+    <img width=80% src="./ex1.png">
+</p>
+
+- `Arrow Function` KHÔNG có Argument Object.
+
+### 2. Rest parameter
+
+- Rest parameter `...` phải được xuất hiện ở cuối:
+
+```javascript
+function fn(a,...rest, b) {
+ // error, nếu chuyển rest xuống cuối thì rest là Array không phải Argument object
+}
+```
+
+- Gom 1 đóng lại thành một array mới:
+
+```javascript
+let [x, y, ...args] = [70, 80, 90, 100];
+//args = [90, 100]
+```
+
+### 3. Spread operator
+
+- Cũng là `...` nhưng xuất hiện bất kì ở đâu ngoại trừ vị trí của rest(vì nếu ở đó thì gọi là rest rồi).
+
+- Spread trong Array hoặc một iterable object (Map, Set):
+
+```javascript
+const odd = [1, 3, 5];
+const combined = [2, ...odd, 4, 6];
+console.log(combined); //[ 2, 1, 3, 5, 4, 6 ]
+```
+
+- Spread trong Object(ES2018):
+
+```javascript
+const hien = {
+  name: 'hien',
+};
+const student = {
+  ...hien,
+  age: 1998
+};
+
+console.log(student);
+/*
+{
+     name: 'hien',
+     age: 1998
+}
+/*
+```
+
+- Các trường hợp hay dùng:
+
+  - Push element vào array:
+
+    ```javascript
+    const a = [1, 2];
+    const b = [3, 4];
+    b.push(...a); //push từng phần tử
+    //khác với
+    b.push(a); // push 1 phần tử
+    ```
+
+  - Nối mảng
+
+    ```javascript
+    const a = [1, 2];
+    const b = [3, 4];
+    const c = [...a, ...b];
+    ```
+
+  - Clone một array mới(chỉ là shallow copy):
+
+    ```javascript
+    const a = [1, [2, [3]]];
+    const b = [...a];
+    // b[1] === a[1]
+    ```
+
+  - Clone object mới(chỉ là shallow copy):
+
+    ```javascript
+    const hien = {
+      name: "hien",
+    };
+    const student = {
+      hien,
+      age: 1998,
+    };
+    const teacher = {
+      ...student,
+    };
+    console.log(teacher);
+    //student.hien === hien
+    ```
+
+  - Nối object:
+    ```javascript
+    const hien = {
+      name: "hien",
+    };
+    const student = {
+      age: 1998,
+    };
+    const teacher = {
+      ...student,
+      ...hien,
+    };
+    console.log(teacher);
+    ```
+
+### 4. Destructuring
+
+- Object:
+
+  > let { property1: alias1, property2: alias2 = defaultIfUndefined} = object != null || {};
+
+  > Thường dùng destructuring trong function. ({a,b}) => a+b
+
+- Array:
+  > let [property1: alias1, property2: alias2 = defaultIfUndefined] = array != null || [];
+  ```javascript
+  const [a, b, c] = [1, 2, 3];
+  //let a = 1, b = 2, c = 3;
+  ```
+
 ## Promise/Async/Await
 
 - Eager giống như construtor của class, chạy mỗi khi khởi tạo object
 - Lazy giống như define một function mà không chạy.
 
-1. <b>Khởi tạo promise</b>:
+### 1. <b>Khởi tạo promise</b>:
 
 - Cách 1:
 
@@ -41,57 +208,57 @@
   };
   ```
 
-2. <b> Consume data </b>
+### 2. <b> Consume data </b>
 
-   ```javascript
-   p2.catch((error) => {
-     console.log(error);
-   });
+```javascript
+p2.catch((error) => {
+  console.log(error);
+});
 
-   const newP = p3()
-     .then((data) => {
-       console.log(data);
-       // Quá trình consume (then(...)) luôn tạo ra 1 promise nếu không return trong then có nghĩa là return undefined.
-       // return data + 1 <=> return Promise.resolve(data + 1)
-       return data + 1;
-     })
-     .then((x) => {
-       console.log("xxxxx", x);
-       // Muốn cho consume tiếp theo nhảy vào catch thì:
-       return Promise.reject(new Error("error"));
-       // throw new Error('error')
-     })
-     .catch((error) => {
-       console.log(error);
-       // Không return có nghĩa là return undefined <=> return Promise.resolve(undefined)
-     })
-     .then((x) => {
-       console.log(x);
-       // Cứ thế vô tận và newP là cái return cuối cùng của promise chain.
-     });
+const newP = p3()
+  .then((data) => {
+    console.log(data);
+    // Quá trình consume (then(...)) luôn tạo ra 1 promise nếu không return trong then có nghĩa là return undefined.
+    // return data + 1 <=> return Promise.resolve(data + 1)
+    return data + 1;
+  })
+  .then((x) => {
+    console.log("xxxxx", x);
+    // Muốn cho consume tiếp theo nhảy vào catch thì:
+    return Promise.reject(new Error("error"));
+    // throw new Error('error')
+  })
+  .catch((error) => {
+    console.log(error);
+    // Không return có nghĩa là return undefined <=> return Promise.resolve(undefined)
+  })
+  .then((x) => {
+    console.log(x);
+    // Cứ thế vô tận và newP là cái return cuối cùng của promise chain.
+  });
 
-   // Chỉ dùng await trong async function. Mà async function thì return về 1 promise
-   // await 1 promise sẽ giống với việc .then và gán value của promise trước đó cho quá trình await
-   // Sử dụng try catch để xử lý resolve reject với async function
-   function normal() {
-     return 1;
-   }
-   const aFn = async () => {
-     try {
-       console.log("async function");
-       const data = await normal();
-       console.log(data);
-     } catch (error) {
-       // ... xử lý lỗi
-     }
-     return 1;
-   };
+// Chỉ dùng await trong async function. Mà async function thì return về 1 promise
+// await 1 promise sẽ giống với việc .then và gán value của promise trước đó cho quá trình await
+// Sử dụng try catch để xử lý resolve reject với async function
+function normal() {
+  return 1;
+}
+const aFn = async () => {
+  try {
+    console.log("async function");
+    const data = await normal();
+    console.log(data);
+  } catch (error) {
+    // ... xử lý lỗi
+  }
+  return 1;
+};
 
-   // Promise.all([p1,p2,p3]).then(data => console.log(data)) data là []
+// Promise.all([p1,p2,p3]).then(data => console.log(data)) data là []
 
-   // Các thứ tự chạy: callstack => microtask queue (callback của then)=> task queue (callback cua setTimeout,...)
-   // Minh họa https://www.jsv9000.app/
-   ```
+// Các thứ tự chạy: callstack => microtask queue (callback của then)=> task queue (callback cua setTimeout,...)
+// Minh họa https://www.jsv9000.app/
+```
 
 ## Object and Class
 
