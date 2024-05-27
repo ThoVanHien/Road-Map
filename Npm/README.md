@@ -1,3 +1,7 @@
+## NPX
+
+- X có nghĩa là execute: thực thi mà không cần file package.json và thực thi script đó trên kho npm.
+
 ## MAJOR.MINOR.PATCH
 
 - Major là những version `breaking change`
