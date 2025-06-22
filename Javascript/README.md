@@ -170,95 +170,198 @@ console.log(student);
 - Eager giống như construtor của class, chạy mỗi khi khởi tạo object
 - Lazy giống như define một function mà không chạy.
 
-### 1. <b>Khởi tạo promise</b>:
+### 1. Promise
 
-- Cách 1:
+- Javascript Promises are Eager and Not Lazy:
 
   ```javascript
-  const p1 = new Promise((resolve, reject) => {
-    // executor này có lẻ là đặt trong constructor của Promise
-    // ... complex logic
-    resolve("value");
-  });
+  const promise = new Promise((resolve, reject) => {
+      console.log ("Creating promise");
+      resolve("data");
+      //Or reject(error')
+      //Or throw new Error('error)
+  )};
   ```
 
-- Cách 2:
-
+- Convert Eager to Lazy:
   ```javascript
-  const p2 = Promise.reject("error gi do...");
-  ```
-
-- Cách 3: chuyển eager thành lazy
-
-  ```javascript
-  const p3 = function (miliSecond) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve("data sau 1 khoang thoi gian");
-      }, miliSecond);
+  const promise = () =>
+    new Promise((resolve, reject) => {
+      console.log("Creating promise");
+      resolve("data");
+      //Or reject(error')
+      //Or throw new Error('error')
     });
-  };
   ```
+- The same ways return Promise:
+  - First way:
+    ```javascript
+    const p1 = new Promise((resolve, reject) => {
+      resolve("data"); // <=> return resolve("data");
+      //Or reject("error"); <=> return reject ("error"); <=> throw new Eror ("error")
+    });
+    ```
+  - Second way:
+    ```javascript
+    const p2 = async () => {
+      return "hello"; // <=> return Promise.resolve('hello');
+      // Or return Promise.reject('error'); <=> throw new Error('error');
+      // If not return, the data will be undefined
+    };
+    ```
+  - Third way:
+    ```javascript
+    const p3 = () => {
+      return Promise.resolve("hello");
+      // Or return Promise.reject('error');
+    };
+    ```
+- Promise chaining:
 
-- Cách 4: Async function
+  - Use with `then`:
+    ```javascript
+    p.then((res) => {
+      // Default return Promise.resolve(); If not return anything.
+      return res + 1; // <=> Promise.resolve(res + 1)
+      // Or throw new Error('error'); <=> return Promise.reject('error');
+    }).then(console.log);
+    ```
+  - Use with `catch`:
+
+    ```javascript
+    p.catch((error) => {
+      // Default return Promise.resolve(); If not return anything.
+      return error + " at..."; // <=> Promise.resolve(error + " at...")
+      // Or throw new Error('error'); <=> return Promise.reject('error');
+    }).then(console.log);
+    ```
+
+- Tip to avoid promise hell:
   ```javascript
-  const p4 = async () => {
-    // return Promise.resolve('data')
-    return "data";
-  };
+  // There are 2 promise: p1,p2. And p1 need data p2
+  const p1 = (value) => Promise.resolve("p1 get" + value);
+  const p2 = Promise.resolve("data from p2");
+  p2.then((data) => {
+    return p1(data);
+  }).then(console.log); //p1's then
   ```
 
-### 2. <b> Consume data </b>
+### 2. Async/Await
 
-```javascript
-p2.catch((error) => {
-  console.log(error);
-});
+- `Async function` always return a `promise`.
+- The `await` operator is used to wait for a Promise and get its fulfillment value. It can only be used inside an `async function`.
 
-const newP = p3()
-  .then((data) => {
-    console.log(data);
-    // Quá trình consume (then(...)) luôn tạo ra 1 promise nếu không return trong then có nghĩa là return undefined.
-    // return data + 1 <=> return Promise.resolve(data + 1)
-    return data + 1;
-  })
-  .then((x) => {
-    console.log("xxxxx", x);
-    // Muốn cho consume tiếp theo nhảy vào catch thì:
-    return Promise.reject(new Error("error"));
-    // throw new Error('error')
-  })
-  .catch((error) => {
-    console.log(error);
-    // Không return có nghĩa là return undefined <=> return Promise.resolve(undefined)
-  })
-  .then((x) => {
-    console.log(x);
-    // Cứ thế vô tận và newP là cái return cuối cùng của promise chain.
-  });
+  ```javascript
+  const p = Promise.resolve("data");
+  const aFn = async () => {
+    const data = await p;
+    console.log(data); // From this line will be pushed microtask queue.
+    return 1; // Default return Promise.resolve(); If not return anything.
+  };
+  aFn();
+  console.log("script end");
+  ```
 
-// Chỉ dùng await trong async function. Mà async function thì return về 1 promise
-// await 1 promise sẽ giống với việc .then và gán value của promise trước đó cho quá trình await
-// Sử dụng try catch để xử lý resolve reject với async function
-function normal() {
-  return 1;
-}
-const aFn = async () => {
-  try {
-    console.log("async function");
-    const data = await normal();
-    console.log(data);
-  } catch (error) {
-    // ... xử lý lỗi
+- Handle error with try/catch:
+
+  ```javascript
+  const getApi1 = () => {
+    return Promise.reject(new Error("Loi get api"));
+  };
+  const getApi2 = async () => {
+    try {
+      await getApi1(); // Đoạn này kết quả reject nên nhảy vào catch ở dưới
+      console.log("in try getapi2");
+      return "value getApi2";
+    } catch (error) {
+      // Default return Promise.resolve(); If not return anything.
+    }
+  };
+
+  const getApi3 = async () => {
+    //Should use try/catch in the top level of async function
+    try {
+      const data = await getApi2();
+      console.log(data);
+    } catch (error) {
+      console.log("loi roi");
+    }
+  };
+  getApi3();
+  console.log("script end");
+  //script end
+  //undefined
+  ```
+
+### 3. Event Loop
+
+- Ref: https://viblo.asia/p/event-loop-trong-javascript-microtask-macrotask-promise-va-cac-cau-hoi-phong-van-pho-bien-GyZJZjrbJjm
+- Order of execution: `Sync code` -> `Microtask` -> `Rendering` -> `Macrotask`.
+- If have a `await` promise:
+
+  - The `Event Loop` will wait until this promise is resolved.
+  - Tasks in the code following an await expression will be added to the `Microtask queue`.
+
+- Ví dụ từ bài viết:
+
+  ```javascript
+  async function async1() {
+    console.log("async1 start");
+    await async2(); // Phải đợi cho tới khi async2 này resolved
+    console.log("async1 end"); // Đưa vào microtask queue
   }
-  return 1;
-};
 
-// Promise.all([p1,p2,p3]).then(data => console.log(data)) data là []
+  async function async2() {
+    console.log("async2 start");
+    //Chờ cho promise này chạy xong
+    await new Promise((resolve) => {
+      console.log("async2 promise"); //Sync code
+      setTimeout(() => {
+        console.log("async2 setTimeout"); // Đưa vào macrotask queue
+        resolve();
+      }, 100);
+    });
+    console.log("async2 end"); // Đưa vào microtask queue. Có await async2() nên đợi cái này xong.
+    // Function này không return nên mặc định là Promise.resolve() = undefined
+  }
+  async1();
+  ```
 
-// Các thứ tự chạy: callstack => microtask queue (callback của then)=> task queue (callback cua setTimeout,...)
-// Minh họa https://www.jsv9000.app/
-```
+- When we use setTimeout(cb, 3000): Runtime will register timer or libuv(Nodejs).
+- Một vài bài toán về rendering performance trong bài viết:
+
+  ```javascript
+  let count = 0;
+  setInterval(() => {
+    document.getElementById("count").innerHTML = `Count: ${++count}`;
+  }, 1000);
+
+  function start() {
+    console.log("start");
+    let i = 0;
+
+    let start = Date.now();
+
+    function count() {
+      // move the scheduling to the beginning
+      if (i < 2e9 - 1e6) {
+        // Những setTimeout lồng nhau thì từ cái thứ 6 trở đi sẽ delay 4ms
+        setTimeout(count); // schedule the new call
+        // Đưa setTimeout lên đây sẽ làm cho macrotask queue sẽ có sẵn callback mà không phải chờ đưa vào.
+      }
+
+      do {
+        i++;
+      } while (i % 1e6 != 0);
+
+      if (i == 2e9) {
+        document.getElementById("log").innerHTML =
+          "Log: Done in " + (Date.now() - start) + "ms";
+      }
+    }
+
+    count();
+  ```
 
 ## Object and Class
 
