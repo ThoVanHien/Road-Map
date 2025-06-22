@@ -169,6 +169,7 @@ console.log(student);
 
 - Eager giống như construtor của class, chạy mỗi khi khởi tạo object
 - Lazy giống như define một function mà không chạy.
+- Ref: https://duthanhduoc.com/blog/on-tap-callback-promise-async-await
 
 ### 1. Promise
 
