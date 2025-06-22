@@ -34,11 +34,6 @@ function example() {
 example(1, 2, 3, 4);
 ```
 
-- Nó là một `iterable`.
-<p align="center" width=100%>
-    <img width=80% src="./ex1.png">
-</p>
-
 - `Arrow Function` KHÔNG có Argument Object.
 
 ### 2. Rest parameter
